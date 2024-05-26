@@ -43,9 +43,29 @@ const fs = require('fs/promises');
         }
     };
 
-    const addToFile = (path, content) => {
-        console.log(`Adding to ${path}`);
-        console.log(`Content to add: ${content}`);
+    // track previously added content
+    let addedContent;
+
+    const addToFile = async (path, content) => {
+        if (addedContent === content) return;
+        try {
+            const fileHandle = await fs.open(path, 'a');
+            fileHandle.write(content);
+            addedContent = content;
+            fileHandle.close();
+            console.log('The content was added successfully!');
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                console.log(
+                    "No file at this path to add content to, or the destination doesn't exist."
+                );
+            } else {
+                console.log(
+                    'An error occurred while adding content to the file.'
+                );
+                console.log(error);
+            }
+        }
     };
 
     // commands
