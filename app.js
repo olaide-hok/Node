@@ -16,13 +16,8 @@ const fs = require('fs/promises');
         const position = 0;
 
         // read the whole content of the file (from the beginning all the way to the end of the file.)
-        const content = await commandFileHandler.read(
-            buff,
-            offset,
-            length,
-            position
-        );
-        console.log(content);
+        await commandFileHandler.read(buff, offset, length, position);
+        console.log(buff.toString('utf-8'));
     });
 
     // watcher ...
