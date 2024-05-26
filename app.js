@@ -15,7 +15,16 @@ const fs = require('fs/promises');
     };
 
     const deleteFile = async (path) => {
-        console.log(`Deleting ${path}...`);
+        try {
+            await fs.unlink(path);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                console.log('No file at this path to remove.');
+            } else {
+                console.log('An error occurred while removing the file.');
+                console.log(error);
+            }
+        }
     };
 
     const renameFile = (oldPath, newPath) => {
