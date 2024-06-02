@@ -132,7 +132,7 @@ const fs = require('node:fs/promises');
 
     // resume loop once the stream's internal buffer is emptied.
     stream.on('drain', () => {
-        console.log('Draining!!!');
+        console.log('Drained!!!');
         writeMany();
     });
 
