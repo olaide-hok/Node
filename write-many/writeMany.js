@@ -82,7 +82,7 @@ const fs = require('node:fs/promises');
 
 (async () => {
     console.time('writeMany');
-    const fileHandle = await fs.open('test.txt', 'w');
+    const fileHandle = await fs.open('src.txt', 'w');
     const stream = fileHandle.createWriteStream();
 
     // console.log(stream.writableHighWaterMark);
@@ -111,13 +111,14 @@ const fs = require('node:fs/promises');
     // setInterval(() => {}, 1000);
 
     let i = 0;
+    const numOfWrites = 10000000;
 
     const writeMany = () => {
-        while (i < 1000000) {
+        while (i < numOfWrites) {
             const buff = Buffer.from(` ${i} `, 'utf-8');
 
             // this is the last write
-            if (i === 999999) {
+            if (i === numOfWrites - 1) {
                 return stream.end(buff);
             }
 
