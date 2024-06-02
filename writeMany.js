@@ -33,11 +33,26 @@ const fs = require('node:fs');
 // Execution Time: 00:15.323 (m:ss.mmm)
 // CPU Usage: (one core)
 // Memory Usage:
+// (async () => {
+//     console.time('writeMany');
+//     fs.open('test.txt', 'w', (err, fd) => {
+//         for (let i = 0; i < 1000000; i++) {
+//             fs.writeSync(fd, ` ${i} `);
+//         }
+
+//         console.timeEnd('writeMany');
+//     });
+// })();
+
+// Execution Time: 00:14.175 (m:ss.mmm) with buffer
+// CPU Usage: (one core)
+// Memory Usage:
 (async () => {
     console.time('writeMany');
     fs.open('test.txt', 'w', (err, fd) => {
         for (let i = 0; i < 1000000; i++) {
-            fs.writeSync(fd, ` ${i} `);
+            const buff = Buffer.from(` ${i} `, 'utf-8');
+            fs.writeSync(fd, buff);
         }
 
         console.timeEnd('writeMany');
