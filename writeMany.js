@@ -28,7 +28,7 @@
 // })();
 
 // Using callback approach.
-const fs = require('node:fs');
+// const fs = require('node:fs');
 
 // Execution Time: 00:15.323 (m:ss.mmm)
 // CPU Usage: (one core)
@@ -47,14 +47,33 @@ const fs = require('node:fs');
 // Execution Time: 00:14.175 (m:ss.mmm) with buffer
 // CPU Usage: (one core)
 // Memory Usage:
+// (async () => {
+//     console.time('writeMany');
+//     fs.open('test.txt', 'w', (err, fd) => {
+//         for (let i = 0; i < 1000000; i++) {
+//             const buff = Buffer.from(` ${i} `, 'utf-8');
+//             fs.writeSync(fd, buff);
+//         }
+
+//         console.timeEnd('writeMany');
+//     });
+// })();
+
+// DON"T DO IT THIS WAY
+const fs = require('node:fs/promises');
+
+// Execution Time: 00:01.058 (m:ss.mmm)
+// CPU Usage: (one core)
+// Memory Usage: high memory usage
 (async () => {
     console.time('writeMany');
-    fs.open('test.txt', 'w', (err, fd) => {
-        for (let i = 0; i < 1000000; i++) {
-            const buff = Buffer.from(` ${i} `, 'utf-8');
-            fs.writeSync(fd, buff);
-        }
+    const fileHandle = await fs.open('test.txt', 'w');
+    const stream = fileHandle.createWriteStream();
 
-        console.timeEnd('writeMany');
-    });
+    for (let i = 0; i < 1000000; i++) {
+        const buff = Buffer.from(` ${i} `, 'utf-8');
+        stream.write(buff);
+    }
+
+    console.timeEnd('writeMany');
 })();
