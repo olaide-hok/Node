@@ -85,36 +85,59 @@ const fs = require('node:fs/promises');
     const fileHandle = await fs.open('test.txt', 'w');
     const stream = fileHandle.createWriteStream();
 
-    console.log(stream.writableHighWaterMark);
+    // console.log(stream.writableHighWaterMark);
 
-    // 8 bits = 1 byte
-    // 1000 byte = 1 kilobyte
-    // 1000 kilobyte = 1 megabyte
+    // // 8 bits = 1 byte
+    // // 1000 byte = 1 kilobyte
+    // // 1000 kilobyte = 1 megabyte
 
-    // 1a => 0001 1010
+    // // 1a => 0001 1010
 
-    const buff = Buffer.alloc(16383, 'a');
-    // console.log(buff);
-    stream.write(buff);
-    console.log(stream.write(buff));
-    console.log(stream.write(Buffer.alloc(1, 'a')));
-    console.log(stream.write(Buffer.alloc(1, 'a')));
-    console.log(stream.write(Buffer.alloc(1, 'a')));
-    console.log(stream.writableLength);
+    // const buff = Buffer.alloc(16383, 'a');
+    // // console.log(buff);
+    // stream.write(buff);
+    // console.log(stream.write(buff));
+    // console.log(stream.write(Buffer.alloc(1, 'a')));
+    // console.log(stream.write(Buffer.alloc(1, 'a')));
+    // console.log(stream.write(Buffer.alloc(1, 'a')));
+    // console.log(stream.writableLength);
 
-    stream.on('drain', () => {
-        console.log(stream.write(Buffer.alloc(1, 'a')));
-        console.log('We are now safe to write more!');
-        console.log(stream.writableLength);
-    });
+    // stream.on('drain', () => {
+    //     console.log(stream.write(Buffer.alloc(1, 'a')));
+    //     console.log('We are now safe to write more!');
+    //     console.log(stream.writableLength);
+    // });
 
     // setInterval(() => {}, 1000);
 
-    // for (let i = 0; i < 1000000; i++) {
-    //     const buff = Buffer.from(` ${i} `, 'utf-8');
-    //     stream.write(buff);
-    // }
+    let i = 0;
 
-    // console.timeEnd('writeMany');
-    // fileHandle.close();
+    const writeMany = () => {
+        while (i < 1000000) {
+            const buff = Buffer.from(` ${i} `, 'utf-8');
+
+            // this is the last write
+            if (i === 999999) {
+                return stream.end(buff);
+            }
+
+            // if steam.write returns false, stop the loop
+            if (!stream.write(buff)) {
+                break;
+            }
+            i++;
+        }
+    };
+    writeMany();
+
+    // resume loop once the stream's internal buffer is emptied.
+    stream.on('drain', () => {
+        console.log('Draining!!!');
+        writeMany();
+    });
+
+    stream.on('finish', () => {
+        console.timeEnd('writeMany');
+        fileHandle.close();
+    });
 })();
