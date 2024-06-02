@@ -60,20 +60,43 @@
 // })();
 
 // DON"T DO IT THIS WAY
-const fs = require('node:fs/promises');
+// const fs = require('node:fs/promises');
 
 // Execution Time: 00:01.058 (m:ss.mmm)
 // CPU Usage: (one core)
 // Memory Usage: high memory usage
+// (async () => {
+//     console.time('writeMany');
+//     const fileHandle = await fs.open('test.txt', 'w');
+//     const stream = fileHandle.createWriteStream();
+
+//     for (let i = 0; i < 1000000; i++) {
+//         const buff = Buffer.from(` ${i} `, 'utf-8');
+//         stream.write(buff);
+//     }
+
+//     console.timeEnd('writeMany');
+// })();
+
+const fs = require('node:fs/promises');
+
 (async () => {
     console.time('writeMany');
     const fileHandle = await fs.open('test.txt', 'w');
     const stream = fileHandle.createWriteStream();
+    console.log(stream.writableHighWaterMark);
+    console.log('before ', stream.writableLength);
 
-    for (let i = 0; i < 1000000; i++) {
-        const buff = Buffer.from(` ${i} `, 'utf-8');
-        stream.write(buff);
-    }
+    const buff = Buffer.from('string');
+    console.log(buff);
+
+    stream.write(buff);
+    console.log('after ', stream.writableLength);
+
+    // for (let i = 0; i < 1000000; i++) {
+    //     const buff = Buffer.from(` ${i} `, 'utf-8');
+    //     stream.write(buff);
+    // }
 
     console.timeEnd('writeMany');
 })();
