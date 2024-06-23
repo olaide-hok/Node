@@ -1,7 +1,7 @@
 const {spawn} = require('node:child_process');
 const fs = require('node:fs');
 
-const numberFormatter = spawn('number_formatter', ['./dest.txt', '$', ',']);
+const numberFormatter = spawn('./number_formatter', ['./dest.txt', '$', ',']);
 
 numberFormatter.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
@@ -19,7 +19,11 @@ numberFormatter.on('close', (code) => {
     }
 });
 
-const fileStream = fs.createReadStream(
-    '/Users/joseph/Desktop/text-gigantic.txt'
-);
+// /Users/joseph/Desktop/text-gigantic.txt
+const fileStream = fs.createReadStream('<path-to-source-text-file>');
 fileStream.pipe(numberFormatter.stdin);
+
+// numberFormatter.stdin.write("324 8236 4238");
+// numberFormatter.stdin.write("3123 24 8236 4238");
+// numberFormatter.stdin.write("324 12 38236 4238");
+// numberFormatter.stdin.end("321 234 8236 4231 23128"); // sending EOF sign
